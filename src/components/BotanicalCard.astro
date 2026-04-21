@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-// 1. Importamos todas as flores disponíveis
+
+// 1. Importação consolidada de todas as sementes do seu jardim
 import DandelionPlant from './DandelionPlant.astro';
 import LavenderPlant from './LavenderPlant.astro';
 import TulipPlant from './TulipPlant.astro';
@@ -15,33 +16,59 @@ interface Props {
 const { post } = Astro.props;
 const { title, category, keyword, id, flower_type } = post.data;
 
-// 2. Lógica dinâmica: Primeiro olha o flower_type, se não tiver, usa a categoria
+/** * 2. LÓGICA DE PRIORIDADE (Governança de Dados):
+ * Primeiro verifica se existe um 'flower_type' manual no .md.
+ * Se não houver, cai no fallback automático por categoria.
+ */
 const activeFlower = flower_type || 
                      (category === 'GenAI' ? 'dandelion' : 
                       category === 'MLOps' ? 'lavender' : 
                       'tulip');
 
+// Mapeamento de Labels para manter a estética de código que você gosta
 const categoryLabel: Record<string, string> = {
   'GenAI': '=> Dandelion_Type',
   'MLOps': '{ } Lavender_Type',
   'Data Architecture': '[ ] Tulip_Type',
 };
+
+// Mapeamento visual das labels para as flores extras (opcional, para o card não ficar sem label)
+const flowerLabels: Record<string, string> = {
+  'rose': '| | Rose_Type',
+  'sunflower': '( ) Sunflower_Type',
+  'fern': '>> Fern_Type',
+};
 ---
 
 <a href={`/garden/${post.slug}`} class="botanical-card">
-  {/* 3. O SELETOR DINÂMICO TAMBÉM NA HOME */}
-  {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
-  {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
-  {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
-  {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
-  {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
-  {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
+  {/* 3. O SELETOR DINÂMICO: Ele agora renderiza QUALQUER uma das 6 opções */}
+  <div class="flower-wrapper">
+    {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
+    {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
+    {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
+    {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
+    {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
+    {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
+  </div>
 
   <div class="card-meta">
     <div>
       <h2 class="post-title">{title}</h2>
-      <span class="post-category">{categoryLabel[category] ?? category}</span>
+      <span class="post-category">
+        {flower_type ? (flowerLabels[flower_type] || flower_type) : (categoryLabel[category] ?? category)}
+      </span>
     </div>
     {id && <div class="post-id">{id}</div>}
   </div>
 </a>
+
+<style>
+  /* Pequeno ajuste para garantir que a flor fique centralizada no card */
+  .flower-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+</style>
