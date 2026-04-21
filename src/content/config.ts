@@ -5,6 +5,7 @@ const postSchema = z.object({
   date: z.coerce.date(),
   category: z.enum(['GenAI', 'MLOps', 'Data Architecture']),
   keyword: z.string(),
+  flower_type: z.enum(['dandelion', 'lavender', 'tulip', 'rose', 'sunflower', 'fern']).optional(),
   id: z.string().optional(),
   status: z.string().optional(),
   author: z.string().optional(),
