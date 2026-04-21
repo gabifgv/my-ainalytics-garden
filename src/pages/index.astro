@@ -1,22 +1,92 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import BotanicalCard from '../components/BotanicalCard.astro';
+const allPosts = await getCollection('garden');
 
-const posts = (await getCollection('garden')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const getFlower = (type) => {
+  const types = {
+    "tulip": { color: "#d97a8a", label: "Tulip_Type" },
+    "dandelion": { color: "#e9c46a", label: "Dandelion_Type" },
+    "lavender": { color: "#827397", label: "Lavender_Type" },
+    "sunflower": { color: "#f4a261", label: "Sunflower_Type" },
+    "rose": { color: "#e63946", label: "Rose_Type" },
+    "fern": { color: "#3a5335", label: "Fern_Type" }
+  };
+  return types[type] || types["tulip"];
+};
 ---
 
-<BaseLayout>
-  <section class="garden-grid">
-    {posts.length > 0
-      ? posts.map((post) => <BotanicalCard post={post} />)
-      : (
-        <div class="garden-empty">
-          <p>// no posts yet — the garden is being seeded</p>
-        </div>
-      )
-    }
-  </section>
-</BaseLayout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>my AInalytics garden</title>
+    <style>
+        :root { --bg-color: #fcfaf6; --text-main: #2d2d2d; --stem-color: #7a8c71; --main-font: 'Gotham', sans-serif; }
+        body { background-color: var(--bg-color); font-family: var(--main-font); margin: 0; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; }
+        .garden-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; width: 100%; max-width: 1200px; }
+        .botanical-card { transition: transform 0.3s ease; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; }
+        .botanical-card:hover { transform: translateY(-5px); }
+        .post-title { font-size: 1.4rem; font-weight: 500; margin: 0; color: #2d2d2d; }
+        .post-category { font-family: monospace; font-size: 0.7rem; color: var(--stem-color); text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <header style="text-align: center; margin-bottom: 60px;">
+        <h1 style="font-size: 3.5rem; font-weight: 300; color: #4a5c4e; margin: 0;">my AInalytics garden</h1>
+        <div style="font-family: monospace; color: #857f76;">const author = "Gabriella Pinheiro";</div>
+    </header>
+
+    <main class="garden-grid">
+        {sortedPosts.map(post => {
+            const type = post.data.flower_type || (post.data.category === 'GenAI' ? 'dandelion' : 'tulip');
+            const flower = getFlower(type);
+            const key = post.data.keyword || "Data";
+
+            return (
+                <a href={`/garden/${post.slug}`} class="botanical-card">
+                    <svg viewBox="0 0 300 400" width="100%" height="auto">
+                        <path d="M 110 380 Q 150 410 190 380 L 180 300 Q 150 310 120 300 Z" fill="#f0ebd8" opacity="0.6"/>
+                        <path d="M 150 305 Q 150 250 150 200" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                        
+                        <g transform="translate(150, 180)" font-family="monospace" font-size="10" font-weight="bold" fill={flower.color}>
+                            {type === "sunflower" && [...Array(12)].map((_, i) => (
+                                <text transform={`rotate(${i * 30}) translate(35, 0)`}>{key}</text>
+                            ))}
+                            {type === "lavender" && [...Array(7)].map((_, i) => (
+                                <text transform={`translate(${i % 2 === 0 ? 10 : -45}, ${-i * 20})`}>{key}</text>
+                            ))}
+                            {type === "tulip" && (
+                                <g transform="rotate(-90)">
+                                    <text transform="rotate(-20) translate(10, -20)">{key}</text>
+                                    <text transform="rotate(0) translate(20, 0)">{key}</text>
+                                    <text transform="rotate(20) translate(10, 20)">{key}</text>
+                                </g>
+                            )}
+                            {type === "rose" && [...Array(6)].map((_, i) => (
+                                <text transform={`rotate(${i * 60}) translate(${10 + i*2}, ${i*2})`}>{key}</text>
+                            ))}
+                            {type === "dandelion" && [...Array(16)].map((_, i) => (
+                                <text transform={`rotate(${i * 22.5}) translate(45, 0)`} font-size="8">{key}</text>
+                            ))}
+                            {type === "fern" && [...Array(10)].map((_, i) => (
+                                <text transform={`translate(${i % 2 === 0 ? 15 : -55}, ${-i * 18}) rotate(${i % 2 === 0 ? 10 : -10})`}>{key}</text>
+                            ))}
+                        </g>
+                    </svg>
+
+                    <div style="width: 100%; border-top: 1px solid #e5e0d8; padding-top: 15px; display: flex; justify-content: space-between;">
+                        <div>
+                            <h2 class="post-title">{post.data.title}</h2>
+                            <span class="post-category">[{flower.label}]</span>
+                        </div>
+                        <div style="font-family: monospace; color: #857f76;">{post.data.id}</div>
+                    </div>
+                </a>
+            )
+        })}
+    </main>
+</body>
+</html>
