@@ -1,14 +1,25 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+// 1. Importamos todas as flores disponíveis
 import DandelionPlant from './DandelionPlant.astro';
 import LavenderPlant from './LavenderPlant.astro';
 import TulipPlant from './TulipPlant.astro';
+import RosePlant from './RosePlant.astro';
+import SunflowerPlant from './SunflowerPlant.astro';
+import FernPlant from './FernPlant.astro';
 
 interface Props {
   post: CollectionEntry<'garden'>;
 }
+
 const { post } = Astro.props;
-const { title, category, keyword, id } = post.data;
+const { title, category, keyword, id, flower_type } = post.data;
+
+// 2. Lógica dinâmica: Primeiro olha o flower_type, se não tiver, usa a categoria
+const activeFlower = flower_type || 
+                     (category === 'GenAI' ? 'dandelion' : 
+                      category === 'MLOps' ? 'lavender' : 
+                      'tulip');
 
 const categoryLabel: Record<string, string> = {
   'GenAI': '=> Dandelion_Type',
@@ -18,9 +29,13 @@ const categoryLabel: Record<string, string> = {
 ---
 
 <a href={`/garden/${post.slug}`} class="botanical-card">
-  {category === 'GenAI' && <DandelionPlant keyword={keyword} />}
-  {category === 'MLOps' && <LavenderPlant keyword={keyword} />}
-  {category === 'Data Architecture' && <TulipPlant keyword={keyword} />}
+  {/* 3. O SELETOR DINÂMICO TAMBÉM NA HOME */}
+  {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
+  {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
+  {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
+  {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
+  {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
+  {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
 
   <div class="card-meta">
     <div>
