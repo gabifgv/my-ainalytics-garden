@@ -15,7 +15,7 @@ import GinkgoPlant from '../../components/GinkgoPlant.astro';
 import CosmosPlant from '../../components/CosmosPlant.astro';
 import ThistlePlant from '../../components/ThistlePlant.astro';
 import LotusPlant from '../../components/LotusPlant.astro';
-import VinePlant from '../../components/VinePlant.astro';
+import CactusPlant from '../../components/CactusPlant.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
@@ -73,7 +73,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
         {activeFlower === 'cosmos' && <CosmosPlant keyword={keyword} />}
         {activeFlower === 'thistle' && <ThistlePlant keyword={keyword} />}
         {activeFlower === 'lotus' && <LotusPlant keyword={keyword} />}
-        {activeFlower === 'vine' && <VinePlant keyword={keyword} />}
+        {activeFlower === 'cactus' && <CactusPlant keyword={keyword} />}
       </div>
 
       <div class="post-header-meta">

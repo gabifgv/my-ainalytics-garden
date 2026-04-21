@@ -17,7 +17,7 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
   cosmos:    { color: "#c87fb8", label: "** Cosmos_Type" },
   thistle:   { color: "#6b5e9e", label: ":: Thistle_Type" },
   lotus:     { color: "#c05070", label: "@@ Lotus_Type" },
-  vine:      { color: "#4a7c59", label: "~> Vine_Type" },
+  cactus:    { color: "#4d7c3f", label: "|_| Cactus_Type" },
 };
 ---
 
@@ -371,17 +371,27 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
                             <circle cx="150" cy="200" r="7" fill="#c05070" opacity="0.5"/>
                         </>}
 
-                        {/* Vine — trepadeira em curva */}
-                        {type === "vine" && <>
-                            <path d="M 95 305 Q 118 262 142 232 Q 163 200 180 168 Q 196 136 190 98" stroke="var(--stem-color)" stroke-width="2.5" fill="none"/>
-                            <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={col}>
-                                <text transform="translate(104,288) rotate(-22)">{key}</text>
-                                <text transform="translate(120,263) rotate(162)">{key}</text>
-                                <text transform="translate(136,236) rotate(-32)">{key}</text>
-                                <text transform="translate(152,208) rotate(152)">{key}</text>
-                                <text transform="translate(167,180) rotate(-42)">{key}</text>
-                                <text transform="translate(180,152) rotate(142)">{key}</text>
-                                <text transform="translate(190,120) rotate(-52)">{key}</text>
+                        {/* Cactus — corpo com braços */}
+                        {type === "cactus" && <>
+                            <path d="M 130 295 Q 112 292 112 272 L 112 165 Q 112 148 130 148 L 170 148 Q 188 148 188 165 L 188 272 Q 188 292 170 295 Z" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
+                            <path d="M 112 205 L 78 205 Q 62 205 62 190 L 62 148 Q 62 133 78 133 L 112 133" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
+                            <path d="M 188 190 L 222 190 Q 238 190 238 175 L 238 133 Q 238 118 222 118 L 188 118" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
+                            <g font-family="var(--main-font)" font-size="8" font-weight="bold" fill={col} text-anchor="middle">
+                                <text x="150" y="278">{key}</text>
+                                <text x="150" y="260">{key}</text>
+                                <text x="150" y="242">{key}</text>
+                                <text x="150" y="224">{key}</text>
+                                <text x="150" y="206">{key}</text>
+                                <text x="150" y="188">{key}</text>
+                                <text x="150" y="170">{key}</text>
+                                <text x="86" y="196" font-size="7">{key}</text>
+                                <text x="86" y="180" font-size="7">{key}</text>
+                                <text x="86" y="164" font-size="7">{key}</text>
+                                <text x="86" y="148" font-size="7">{key}</text>
+                                <text x="214" y="181" font-size="7">{key}</text>
+                                <text x="214" y="165" font-size="7">{key}</text>
+                                <text x="214" y="149" font-size="7">{key}</text>
+                                <text x="214" y="133" font-size="7">{key}</text>
                             </g>
                         </>}
                     </svg>
