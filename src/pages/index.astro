@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BotanicalCard from '../components/BotanicalCard.astro';
+
+const posts = (await getCollection('garden')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout>
+  <section class="garden-grid">
+    {posts.length > 0
+      ? posts.map((post) => <BotanicalCard post={post} />)
+      : (
+        <div class="garden-empty">
+          <p>// no posts yet — the garden is being seeded</p>
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

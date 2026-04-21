@@ -1,0 +1,26 @@
+---
+interface Props {
+  keyword: string;
+}
+const { keyword } = Astro.props;
+
+type Petal = { x: number; y: number; rotate: number };
+const petals: Petal[] = [];
+for (let i = 0; i < 5; i++) {
+  petals.push({ x: 155, y: 260 - i * 40, rotate: -15 - i * 5 });
+  petals.push({ x: 145, y: 240 - i * 40, rotate: 195 + i * 5 });
+}
+petals.push({ x: 150, y: 60, rotate: -90 });
+---
+<svg viewBox="0 0 300 400" width="100%" height="auto" aria-hidden="true">
+  <!-- Pot -->
+  <path d="M 110 380 Q 150 410 190 380 L 180 300 Q 150 310 120 300 Z" fill="#f0ebd8" opacity="0.6"/>
+  <!-- Stem -->
+  <path d="M 150 305 L 150 70" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+  <!-- Lavender spike — alternating keyword text left/right of stem -->
+  <g font-family="'Gotham', 'Space Mono', monospace" font-size="12" font-weight="bold" fill="#827397">
+    {petals.map((p) => (
+      <text transform={`translate(${p.x}, ${p.y}) rotate(${p.rotate})`}>{keyword}</text>
+    ))}
+  </g>
+</svg>

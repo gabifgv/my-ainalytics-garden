@@ -1,0 +1,115 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'my AInalytics garden',
+  description = 'A living archive of technical insights in Data, AI, and Analytics — by Gabriella Pinheiro.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Blur overlay for sidebar -->
+    <div class="overlay" id="menuOverlay"></div>
+
+    <!-- About sidebar -->
+    <nav class="sidebar" id="aboutSidebar" aria-label="About Gabriella Pinheiro">
+      <button class="close-btn" id="closeBtn" aria-label="Close menu">&times;</button>
+      <h2 class="sidebar-title">README.md</h2>
+      <span class="sidebar-tag">&gt; whoami</span>
+      <p class="sidebar-text">
+        Leading Data and AI ecosystems to drive real business impact. Between designing scalable
+        architectures, MLOps, and GenAI strategies, this space serves as a living archive of my
+        learnings. When I'm not optimizing pipelines, I split my time cultivating my reading habit
+        and training my pace for upcoming marathons.
+      </p>
+
+      <div class="sidebar-section">
+        <p class="sidebar-section-title">// background</p>
+        <p class="sidebar-text" style="border-left: none; padding-left: 0; font-size: 0.85rem;">
+          Manager of Data Intelligence & Analytics at FGV, leading a team of 13 professionals.
+          MSc in Economics · MBA in AI &amp; Analytics.
+        </p>
+      </div>
+
+      <div class="sidebar-section">
+        <p class="sidebar-section-title">// find me</p>
+        <ul class="sidebar-links">
+          <li><a href="https://linkedin.com/in/gabriellapinheiro" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/gbrlla" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Site header -->
+    <header>
+      <button class="menu-btn" id="menuBtn" aria-label="Open about menu">
+        <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="2" fill="currentColor"/>
+          <rect y="9" width="20" height="2" fill="currentColor"/>
+          <rect y="18" width="28" height="2" fill="currentColor"/>
+        </svg>
+      </button>
+      <a href="/" class="site-title">my AInalytics garden</a>
+      <div class="subtitle-code">
+        const author: Manager&lt;AI, Analytics&gt; = "Gabriella Pinheiro"; // insights catalog
+      </div>
+    </header>
+
+    <!-- Page content slot -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <span class="footer-brand">my AInalytics garden · Gabriella Pinheiro</span>
+      <span class="footer-cultivated" id="cultivatedDate">last cultivated: —</span>
+    </footer>
+
+    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const closeBtn = document.getElementById('closeBtn');
+      const overlay = document.getElementById('menuOverlay');
+      const sidebar = document.getElementById('aboutSidebar');
+
+      function openSidebar() {
+        sidebar?.classList.add('active');
+        overlay?.classList.add('active');
+      }
+
+      function closeSidebar() {
+        sidebar?.classList.remove('active');
+        overlay?.classList.remove('active');
+      }
+
+      menuBtn?.addEventListener('click', openSidebar);
+      closeBtn?.addEventListener('click', closeSidebar);
+      overlay?.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSidebar();
+      });
+
+      const cultivatedDate = document.getElementById('cultivatedDate');
+      if (cultivatedDate) {
+        cultivatedDate.textContent = `last cultivated: ${new Date().toLocaleDateString('en-US', {
+          month: 'long', day: 'numeric', year: 'numeric'
+        })}`;
+      }
+    </script>
+  </body>
+</html>

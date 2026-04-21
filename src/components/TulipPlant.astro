@@ -1,0 +1,30 @@
+---
+interface Props {
+  keyword: string;
+}
+const { keyword } = Astro.props;
+
+const petals = [
+  { x: 150, y: 180, rotate: -90 },
+  { x: 135, y: 175, rotate: -105 },
+  { x: 120, y: 160, rotate: -120 },
+  { x: 105, y: 140, rotate: -135 },
+  { x: 165, y: 175, rotate: -75 },
+  { x: 180, y: 160, rotate: -60 },
+  { x: 195, y: 140, rotate: -45 },
+  { x: 142, y: 140, rotate: -90 },
+  { x: 158, y: 140, rotate: -90 },
+];
+---
+<svg viewBox="0 0 300 400" width="100%" height="auto" aria-hidden="true">
+  <!-- Pot -->
+  <path d="M 110 380 Q 150 410 190 380 L 180 300 Q 150 310 120 300 Z" fill="#f0ebd8" opacity="0.6"/>
+  <!-- Stem -->
+  <path d="M 150 305 Q 160 220 150 180" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+  <!-- Tulip petals — keyword text arranged in tulip shape -->
+  <g font-family="'Gotham', 'Space Mono', monospace" font-size="11" font-weight="bold" fill="#c48b52">
+    {petals.map((p) => (
+      <text transform={`translate(${p.x}, ${p.y}) rotate(${p.rotate})`} text-anchor="start">{keyword}</text>
+    ))}
+  </g>
+</svg>

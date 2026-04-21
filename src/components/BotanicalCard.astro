@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import DandelionPlant from './DandelionPlant.astro';
+import LavenderPlant from './LavenderPlant.astro';
+import TulipPlant from './TulipPlant.astro';
+
+interface Props {
+  post: CollectionEntry<'garden'>;
+}
+const { post } = Astro.props;
+const { title, category, keyword, id } = post.data;
+
+const categoryLabel: Record<string, string> = {
+  'GenAI': '=> Dandelion_Type',
+  'MLOps': '{ } Lavender_Type',
+  'Data Architecture': '[ ] Tulip_Type',
+};
+---
+
+<a href={`/garden/${post.slug}`} class="botanical-card">
+  {category === 'GenAI' && <DandelionPlant keyword={keyword} />}
+  {category === 'MLOps' && <LavenderPlant keyword={keyword} />}
+  {category === 'Data Architecture' && <TulipPlant keyword={keyword} />}
+
+  <div class="card-meta">
+    <div>
+      <h2 class="post-title">{title}</h2>
+      <span class="post-category">{categoryLabel[category] ?? category}</span>
+    </div>
+    {id && <div class="post-id">{id}</div>}
+  </div>
+</a>

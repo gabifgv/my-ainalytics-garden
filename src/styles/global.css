@@ -1,0 +1,489 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg-color: #fcfaf6;
+  --text-main: #2d2d2d;
+  --text-muted: #857f76;
+  --border-color: #e5e0d8;
+  --stem-color: #7a8c71;
+  --card-hover-shadow: 0 8px 32px rgba(0,0,0,0.06);
+
+  --main-font: 'Gotham', 'Space Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --code-font: 'Gotham Code', 'Space Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--main-font);
+  padding: 50px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+header {
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+.site-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #4a5c4e;
+  margin: 0 0 10px 0;
+  letter-spacing: -1px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.site-title:hover {
+  opacity: 0.85;
+}
+
+.subtitle-code {
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* --- Menu Button --- */
+.menu-btn {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  color: var(--stem-color);
+  transition: opacity 0.2s;
+}
+
+.menu-btn:hover {
+  opacity: 0.7;
+}
+
+/* --- Overlay --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(252, 250, 246, 0.7);
+  backdrop-filter: blur(3px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -400px;
+  width: 350px;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.04);
+  z-index: 999;
+  padding: 50px 40px;
+  box-sizing: border-box;
+  transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
+}
+
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  color: var(--text-main);
+}
+
+.sidebar-tag {
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: var(--stem-color);
+  margin-bottom: 30px;
+  display: block;
+}
+
+.sidebar-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border-color);
+  padding-left: 15px;
+  font-weight: 400;
+}
+
+.sidebar-section {
+  margin-top: 30px;
+}
+
+.sidebar-section-title {
+  font-family: var(--code-font);
+  font-size: 0.7rem;
+  color: var(--stem-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.sidebar-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-links a {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sidebar-links a:hover {
+  color: var(--text-main);
+}
+
+/* --- Garden Grid --- */
+.garden-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* --- Botanical Card --- */
+.botanical-card {
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.botanical-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-meta {
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.post-title {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  color: #2d2d2d;
+}
+
+.post-category {
+  font-family: var(--code-font);
+  font-size: 0.7rem;
+  color: #4a5c4e;
+  text-transform: uppercase;
+}
+
+.post-id {
+  font-family: var(--code-font);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.botanical-card svg {
+  max-height: 350px;
+  width: 100%;
+}
+
+/* --- Empty Garden State --- */
+.garden-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-family: var(--code-font);
+  font-size: 0.9rem;
+}
+
+/* --- Post Page --- */
+.post-page {
+  width: 100%;
+  max-width: 800px;
+}
+
+.post-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 50px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-header-plant {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.post-header-meta {
+  flex: 1;
+  padding-top: 20px;
+}
+
+.post-header-category {
+  font-family: var(--code-font);
+  font-size: 0.7rem;
+  color: #4a5c4e;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.post-header-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #2d2d2d;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.post-header-date {
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.post-header-status {
+  margin-top: 8px;
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: var(--stem-color);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--code-font);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 40px;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--stem-color);
+}
+
+/* --- Post Content Prose --- */
+.post-content {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text-main);
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3 {
+  font-weight: 500;
+  margin: 2em 0 0.75em;
+  color: #2d2d2d;
+  letter-spacing: -0.3px;
+}
+
+.post-content h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-content h3 {
+  font-size: 1.15rem;
+  color: #4a5c4e;
+}
+
+.post-content p {
+  margin-bottom: 1.4em;
+  color: var(--text-muted);
+}
+
+.post-content strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.post-content em {
+  color: #4a5c4e;
+}
+
+.post-content code {
+  font-family: var(--code-font);
+  font-size: 0.85em;
+  background: #f0ede6;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #4a5c4e;
+}
+
+.post-content pre {
+  background: #f0ede6;
+  padding: 20px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 1em 0 1.4em 1.5em;
+  color: var(--text-muted);
+}
+
+.post-content li {
+  margin-bottom: 0.5em;
+}
+
+.post-content blockquote {
+  border-left: 2px solid var(--border-color);
+  padding-left: 20px;
+  margin: 1.5em 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.post-content hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 2.5em 0;
+}
+
+.post-content a {
+  color: #4a5c4e;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.post-content a:hover {
+  color: var(--text-main);
+}
+
+/* --- Footer --- */
+footer {
+  margin-top: 80px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footer-cultivated {
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  body {
+    padding: 30px 16px;
+  }
+
+  .site-title {
+    font-size: 2.2rem;
+  }
+
+  .garden-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .post-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .post-header-plant {
+    width: 140px;
+  }
+
+  .post-header-title {
+    font-size: 1.8rem;
+  }
+
+  .sidebar {
+    width: 90vw;
+  }
+}

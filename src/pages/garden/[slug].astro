@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DandelionPlant from '../../components/DandelionPlant.astro';
+import LavenderPlant from '../../components/LavenderPlant.astro';
+import TulipPlant from '../../components/TulipPlant.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('garden');
+  return posts.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, date, category, keyword, id, author, status } = entry.data;
+
+const categoryLabel: Record<string, string> = {
+  'GenAI': '=> Dandelion_Type',
+  'MLOps': '{ } Lavender_Type',
+  'Data Architecture': '[ ] Tulip_Type',
+};
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  month: 'long', day: 'numeric', year: 'numeric',
+});
+---
+
+<BaseLayout title={`${title} · my AInalytics garden`} description={`${title} by Gabriella Pinheiro`}>
+  <article class="post-page">
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 10 7 L 4 7 M 4 7 L 7 4 M 4 7 L 7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      cd ../garden
+    </a>
+
+    <header class="post-header">
+      <div class="post-header-plant">
+        {category === 'GenAI' && <DandelionPlant keyword={keyword} />}
+        {category === 'MLOps' && <LavenderPlant keyword={keyword} />}
+        {category === 'Data Architecture' && <TulipPlant keyword={keyword} />}
+      </div>
+
+      <div class="post-header-meta">
+        <span class="post-header-category">{categoryLabel[category] ?? category}</span>
+        <h1 class="post-header-title">{title}</h1>
+        <div class="post-header-date">
+          {formattedDate}{author && ` · ${author}`}{id && ` · #${id}`}
+        </div>
+        {status && <div class="post-header-status">{status}</div>}
+      </div>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
