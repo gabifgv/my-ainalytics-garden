@@ -1,9 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 1. Importação das Plantas (Adicione as novas aqui conforme criar os componentes)
 import DandelionPlant from '../../components/DandelionPlant.astro';
 import LavenderPlant from '../../components/LavenderPlant.astro';
 import TulipPlant from '../../components/TulipPlant.astro';
+import RosePlant from '../../components/RosePlant.astro'; // Nova
+import FernPlant from '../../components/FernPlant.astro'; // Nova (Samambaia)
+import CactusPlant from '../../components/CactusPlant.astro'; // Nova
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
@@ -15,12 +20,21 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
-const { title, date, category, keyword, id, author, status } = entry.data;
+
+// 2. Extraímos o flower_type do metadado do post
+const { title, date, category, keyword, id, author, status, flower_type } = entry.data;
+
+// 3. Lógica de Decisão (Prioridade: flower_type > category)
+const activeFlower = flower_type || 
+                     (category === 'GenAI' ? 'dandelion' : 
+                      category === 'MLOps' ? 'lavender' : 
+                      'tulip');
 
 const categoryLabel: Record<string, string> = {
   'GenAI': '=> Dandelion_Type',
   'MLOps': '{ } Lavender_Type',
   'Data Architecture': '[ ] Tulip_Type',
+  'Management': '| | Rose_Type', // Exemplo
 };
 
 const formattedDate = date.toLocaleDateString('en-US', {
@@ -39,9 +53,13 @@ const formattedDate = date.toLocaleDateString('en-US', {
 
     <header class="post-header">
       <div class="post-header-plant">
-        {category === 'GenAI' && <DandelionPlant keyword={keyword} />}
-        {category === 'MLOps' && <LavenderPlant keyword={keyword} />}
-        {category === 'Data Architecture' && <TulipPlant keyword={keyword} />}
+        {/* 4. O NOVO SELETOR DINÂMICO */}
+        {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
+        {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
+        {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
+        {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
+        {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
+        {activeFlower === 'cactus' && <CactusPlant keyword={keyword} />}
       </div>
 
       <div class="post-header-meta">

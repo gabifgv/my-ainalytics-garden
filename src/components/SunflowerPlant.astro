@@ -1,0 +1,11 @@
+---
+const { keyword } = Astro.props;
+---
+<svg viewBox="0 0 300 400" width="100%" height="auto">
+  <path d="M 150 305 Q 150 250 150 200" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+  <g transform="translate(150, 180)" font-family="monospace" font-size="10" font-weight="bold" fill="#f4a261">
+    {[...Array(12)].map((_, i) => (
+      <text transform={`rotate(${i * 30}) translate(35, 0)`}>{keyword}</text>
+    ))}
+  </g>
+</svg>
