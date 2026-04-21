@@ -6,9 +6,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import DandelionPlant from '../../components/DandelionPlant.astro';
 import LavenderPlant from '../../components/LavenderPlant.astro';
 import TulipPlant from '../../components/TulipPlant.astro';
-import RosePlant from '../../components/RosePlant.astro'; // Nova
-import FernPlant from '../../components/FernPlant.astro'; // Nova (Samambaia)
-import CactusPlant from '../../components/CactusPlant.astro'; // Nova
+import RosePlant from '../../components/RosePlant.astro';
+import FernPlant from '../../components/FernPlant.astro';
+import SunflowerPlant from '../../components/SunflowerPlant.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
@@ -59,7 +59,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
         {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
         {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
         {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
-        {activeFlower === 'cactus' && <CactusPlant keyword={keyword} />}
+        {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
       </div>
 
       <div class="post-header-meta">
