@@ -417,29 +417,50 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
                             <circle cx="150" cy="200" r="7" fill="#c05070" opacity="0.5"/>
                         </>}
 
-                        {/* Cactus — corpo com braços */}
-                        {type === "cactus" && <>
-                            <path d="M 130 295 Q 112 292 112 272 L 112 165 Q 112 148 130 148 L 170 148 Q 188 148 188 165 L 188 272 Q 188 292 170 295 Z" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
-                            <path d="M 112 205 L 78 205 Q 62 205 62 190 L 62 148 Q 62 133 78 133 L 112 133" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
-                            <path d="M 188 190 L 222 190 Q 238 190 238 175 L 238 133 Q 238 118 222 118 L 188 118" fill="#deecd8" opacity="0.35" stroke="var(--stem-color)" stroke-width="2.5"/>
-                            <g font-family="var(--main-font)" font-size="8" font-weight="bold" fill={col} text-anchor="middle">
-                                <text x="150" y="278">{key}</text>
-                                <text x="150" y="260">{key}</text>
-                                <text x="150" y="242">{key}</text>
-                                <text x="150" y="224">{key}</text>
-                                <text x="150" y="206">{key}</text>
-                                <text x="150" y="188">{key}</text>
-                                <text x="150" y="170">{key}</text>
-                                <text x="86" y="196" font-size="7">{key}</text>
-                                <text x="86" y="180" font-size="7">{key}</text>
-                                <text x="86" y="164" font-size="7">{key}</text>
-                                <text x="86" y="148" font-size="7">{key}</text>
-                                <text x="214" y="181" font-size="7">{key}</text>
-                                <text x="214" y="165" font-size="7">{key}</text>
-                                <text x="214" y="149" font-size="7">{key}</text>
-                                <text x="214" y="133" font-size="7">{key}</text>
-                            </g>
-                        </>}
+                        {/* Cactus — silhueta tipográfica com clipPath */}
+                        {type === "cactus" && (() => {
+                            const uid2 = Math.random().toString(36).slice(2,8);
+                            const strip2 = `${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key} ${key}`;
+                            return <>
+                              <defs>
+                                <clipPath id={`mb-${uid2}`}><rect x="128" y="92" width="44" height="198"/></clipPath>
+                                <clipPath id={`lh-${uid2}`}><rect x="62" y="182" width="66" height="24"/></clipPath>
+                                <clipPath id={`lv-${uid2}`}><rect x="62" y="112" width="28" height="70"/></clipPath>
+                                <clipPath id={`rh-${uid2}`}><rect x="172" y="162" width="66" height="24"/></clipPath>
+                                <clipPath id={`rv-${uid2}`}><rect x="210" y="94" width="28" height="68"/></clipPath>
+                              </defs>
+                              <rect x="128" y="92" width="44" height="198" rx="12" fill="#d6e8cc" opacity="0.28"/>
+                              <rect x="62" y="182" width="66" height="24" rx="6" fill="#d6e8cc" opacity="0.28"/>
+                              <rect x="62" y="112" width="28" height="70" rx="6" fill="#d6e8cc" opacity="0.28"/>
+                              <rect x="172" y="162" width="66" height="24" rx="6" fill="#d6e8cc" opacity="0.28"/>
+                              <rect x="210" y="94" width="28" height="68" rx="6" fill="#d6e8cc" opacity="0.28"/>
+                              <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={col}>
+                                <g clip-path={`url(#mb-${uid2})`}>
+                                  <text transform="translate(138,287) rotate(-90)">{strip2}</text>
+                                  <text transform="translate(150,287) rotate(-90)">{strip2}</text>
+                                  <text transform="translate(162,287) rotate(-90)">{strip2}</text>
+                                </g>
+                                <g clip-path={`url(#lh-${uid2})`}>
+                                  <text transform="translate(128,191) rotate(180)">{strip2}</text>
+                                  <text transform="translate(128,203) rotate(180)">{strip2}</text>
+                                </g>
+                                <g clip-path={`url(#lv-${uid2})`}>
+                                  <text transform="translate(72,182) rotate(-90)">{strip2}</text>
+                                  <text transform="translate(86,182) rotate(-90)">{strip2}</text>
+                                </g>
+                                <g clip-path={`url(#rh-${uid2})`}>
+                                  <text transform="translate(172,171) rotate(0)">{strip2}</text>
+                                  <text transform="translate(172,183) rotate(0)">{strip2}</text>
+                                </g>
+                                <g clip-path={`url(#rv-${uid2})`}>
+                                  <text transform="translate(220,162) rotate(-90)">{strip2}</text>
+                                  <text transform="translate(234,162) rotate(-90)">{strip2}</text>
+                                </g>
+                              </g>
+                              <circle cx="86" cy="182" r="5" fill={col} opacity="0.5"/>
+                              <circle cx="214" cy="162" r="5" fill={col} opacity="0.5"/>
+                            </>
+                        })()}
                     </svg>
 
                     <div class="card-meta">
