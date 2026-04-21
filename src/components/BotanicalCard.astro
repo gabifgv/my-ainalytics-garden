@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
-// 1. Importação consolidada de todas as sementes do seu jardim
+// 1. Importação de TODAS as plantas
 import DandelionPlant from './DandelionPlant.astro';
 import LavenderPlant from './LavenderPlant.astro';
 import TulipPlant from './TulipPlant.astro';
@@ -14,35 +14,36 @@ interface Props {
 }
 
 const { post } = Astro.props;
+// ATENÇÃO: Pegamos o flower_type aqui dos dados do post
 const { title, category, keyword, id, flower_type } = post.data;
 
-/** * 2. LÓGICA DE PRIORIDADE (Governança de Dados):
- * Primeiro verifica se existe um 'flower_type' manual no .md.
- * Se não houver, cai no fallback automático por categoria.
+/**
+ * 2. LÓGICA DE PRIORIDADE:
+ * Se você definiu flower_type no .md, ele ganha.
+ * Se não, ele usa o padrão da categoria.
  */
 const activeFlower = flower_type || 
                      (category === 'GenAI' ? 'dandelion' : 
                       category === 'MLOps' ? 'lavender' : 
                       'tulip');
 
-// Mapeamento de Labels para manter a estética de código que você gosta
 const categoryLabel: Record<string, string> = {
   'GenAI': '=> Dandelion_Type',
   'MLOps': '{ } Lavender_Type',
   'Data Architecture': '[ ] Tulip_Type',
 };
 
-// Mapeamento visual das labels para as flores extras (opcional, para o card não ficar sem label)
+// Label para as flores manuais
 const flowerLabels: Record<string, string> = {
-  'rose': '| | Rose_Type',
-  'sunflower': '( ) Sunflower_Type',
   'fern': '>> Fern_Type',
+  'rose': '| | Rose_Type',
+  'sunflower': '( ) Sunflower_Type'
 };
 ---
 
 <a href={`/garden/${post.slug}`} class="botanical-card">
-  {/* 3. O SELETOR DINÂMICO: Ele agora renderiza QUALQUER uma das 6 opções */}
-  <div class="flower-wrapper">
+  <div class="flower-container" style="display: flex; justify-content: center; width: 100%;">
+    {/* 3. SELETOR DINÂMICO REAL (Aqui estava o erro antes) */}
     {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
     {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
     {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
@@ -61,14 +62,3 @@ const flowerLabels: Record<string, string> = {
     {id && <div class="post-id">{id}</div>}
   </div>
 </a>
-
-<style>
-  /* Pequeno ajuste para garantir que a flor fique centralizada no card */
-  .flower-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-</style>
