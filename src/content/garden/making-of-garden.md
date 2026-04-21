@@ -3,6 +3,7 @@ title: "The Making of My AInalytics Garden: Engineering a Documentation Ecosyste
 date: 2026-04-21
 category: "Data Architecture"
 keyword: "AutoDocumentation"
+flower_type: "lavender"
 id: "05/01"
 author: "Gabriella Pinheiro"
 status: "Draft 🌿"
