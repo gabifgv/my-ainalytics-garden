@@ -9,8 +9,15 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
   lavender:  { color: "#827397", label: "{ } Lavender_Type" },
   tulip:     { color: "#c48b52", label: "[ ] Tulip_Type" },
   rose:      { color: "#c0435a", label: "| | Rose_Type" },
-  sunflower: { color: "#c48b52", label: "( ) Sunflower_Type" },
-  fern:      { color: "#3a5335", label: ">> Fern_Type" },
+  sunflower: { color: "#f4a261", label: "( ) Sunflower_Type" },
+  wheat:     { color: "#d4a04a", label: "// Wheat_Type" },
+  bamboo:    { color: "#3a7d44", label: "[] Bamboo_Type" },
+  coral:     { color: "#e07a5f", label: "~~ Coral_Type" },
+  ginkgo:    { color: "#b8860b", label: "<> Ginkgo_Type" },
+  cosmos:    { color: "#c87fb8", label: "** Cosmos_Type" },
+  thistle:   { color: "#6b5e9e", label: ":: Thistle_Type" },
+  lotus:     { color: "#c05070", label: "@@ Lotus_Type" },
+  vine:      { color: "#4a7c59", label: "~> Vine_Type" },
 };
 ---
 
@@ -214,6 +221,7 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
             const meta = flowerMeta[type] ?? flowerMeta.tulip;
             const key = post.data.keyword || "Data";
             const rep = `${key} ${key} ${key}`;
+            const col = meta.color;
 
             return (
                 <a href={`/garden/${post.slug}`} class="botanical-card">
@@ -272,13 +280,108 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
                             </g>
                         </>}
 
-                        {/* Fern — folhas alternadas subindo */}
-                        {type === "fern" && <>
-                            <path d="M 150 305 L 150 80" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
-                            <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={meta.color}>
-                                {[...Array(10)].map((_, i) => (
-                                    <text transform={`translate(${i % 2 === 0 ? 165 : 100}, ${290 - i * 22}) rotate(${i % 2 === 0 ? -30 : 210})`}>{key}</text>
+                        {/* Wheat — espiga com grãos alternados */}
+                        {type === "wheat" && <>
+                            <path d="M 150 305 L 150 75" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="11" font-weight="bold" fill={col}>
+                                {[...Array(5)].map((_, i) => (<>
+                                    <text transform={`translate(158,${280 - i*26}) rotate(-38)`}>{key}</text>
+                                    <text transform={`translate(132,${267 - i*26}) rotate(218)`}>{key}</text>
+                                </>))}
+                                <text transform="translate(150,80) rotate(-90)" text-anchor="middle">{key}</text>
+                            </g>
+                        </>}
+
+                        {/* Bamboo — segmentos com folhas */}
+                        {type === "bamboo" && <>
+                            <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={col}>
+                                {[...Array(5)].map((_, i) => (<>
+                                    <rect x="136" y={258 - i*52} width="28" height="48" fill="none" stroke="var(--stem-color)" stroke-width="2.5" rx="3"/>
+                                    <text transform={`translate(${i % 2 === 0 ? 167 : 108},${282 - i*52}) rotate(${i % 2 === 0 ? -35 : 210})`}>{key}</text>
+                                </>))}
+                            </g>
+                        </>}
+
+                        {/* Coral — ramificações com keyword nas pontas */}
+                        {type === "coral" && <>
+                            <path d="M 150 305 Q 150 245 150 205" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <path d="M 150 205 Q 112 175 80 155" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+                            <path d="M 150 205 Q 188 175 220 155" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+                            <path d="M 150 205 Q 150 170 150 148" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+                            <path d="M 80 155 Q 58 128 48 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <path d="M 80 155 Q 92 128 98 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <path d="M 220 155 Q 208 128 202 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <path d="M 220 155 Q 232 128 242 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <path d="M 150 148 Q 140 122 136 102" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <path d="M 150 148 Q 160 122 164 102" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="9" font-weight="bold" fill={col}>
+                                <text x="20" y="108">{key}</text>
+                                <text x="82" y="108">{key}</text>
+                                <text x="122" y="100">{key}</text>
+                                <text x="158" y="100">{key}</text>
+                                <text x="198" y="108">{key}</text>
+                                <text x="238" y="108">{key}</text>
+                            </g>
+                        </>}
+
+                        {/* Ginkgo — leque semicircular */}
+                        {type === "ginkgo" && <>
+                            <path d="M 150 305 L 150 215" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <path d="M 62 202 Q 96 118 150 210 Q 204 118 238 202 Q 200 186 150 210 Q 100 186 62 202 Z" fill="#f2cc8f" opacity="0.2"/>
+                            <g font-family="var(--main-font)" font-size="9" font-weight="bold" fill={col}>
+                                {[-80,-60,-40,-20,0,20,40,60,80].map(angle => {
+                                    const tx = (150 + 84 * Math.cos((angle-90)*Math.PI/180)).toFixed(1);
+                                    const ty = (198 + 84 * Math.sin((angle-90)*Math.PI/180)).toFixed(1);
+                                    return <text transform={`translate(${tx},${ty}) rotate(${angle})`} text-anchor="middle">{key}</text>
+                                })}
+                            </g>
+                        </>}
+
+                        {/* Cosmos — pétalas longas ao redor do centro */}
+                        {type === "cosmos" && <>
+                            <path d="M 150 305 Q 150 235 150 192" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g transform="translate(150,192)" font-family="var(--main-font)" font-size="9" font-weight="bold" fill={col}>
+                                {[...Array(12)].map((_, i) => (
+                                    <text transform={`rotate(${i*30}) translate(26,3)`}>{key}</text>
                                 ))}
+                            </g>
+                            <circle cx="150" cy="192" r="8" fill={col} opacity="0.5"/>
+                        </>}
+
+                        {/* Thistle — bola espinhosa */}
+                        {type === "thistle" && <>
+                            <path d="M 150 305 Q 150 218 150 182" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <circle cx="150" cy="148" r="48" fill={col} opacity="0.07"/>
+                            <g transform="translate(150,148)" font-family="var(--main-font)" font-size="7" font-weight="bold" fill={col}>
+                                {[...Array(20)].map((_, i) => (
+                                    <text transform={`rotate(${i*18}) translate(${i%2===0?50:38},3)`}>{key}</text>
+                                ))}
+                            </g>
+                            <circle cx="150" cy="148" r="12" fill={col} opacity="0.3"/>
+                        </>}
+
+                        {/* Lotus — camadas concêntricas */}
+                        {type === "lotus" && <>
+                            <path d="M 150 305 Q 150 238 150 212" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g transform="translate(150,200)" font-family="var(--main-font)" font-weight="bold" fill={col}>
+                                {[...Array(8)].map((_, i) => <text font-size="8" transform={`rotate(${i*45-90}) translate(58,3)`}>{key}</text>)}
+                                {[...Array(6)].map((_, i) => <text font-size="8" transform={`rotate(${i*60-60}) translate(34,3)`} fill="#d97a8a">{key}</text>)}
+                                {[...Array(4)].map((_, i) => <text font-size="9" transform={`rotate(${i*90-45}) translate(16,3)`} fill="#c05070">{key}</text>)}
+                            </g>
+                            <circle cx="150" cy="200" r="7" fill="#c05070" opacity="0.5"/>
+                        </>}
+
+                        {/* Vine — trepadeira em curva */}
+                        {type === "vine" && <>
+                            <path d="M 95 305 Q 118 262 142 232 Q 163 200 180 168 Q 196 136 190 98" stroke="var(--stem-color)" stroke-width="2.5" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={col}>
+                                <text transform="translate(104,288) rotate(-22)">{key}</text>
+                                <text transform="translate(120,263) rotate(162)">{key}</text>
+                                <text transform="translate(136,236) rotate(-32)">{key}</text>
+                                <text transform="translate(152,208) rotate(152)">{key}</text>
+                                <text transform="translate(167,180) rotate(-42)">{key}</text>
+                                <text transform="translate(180,152) rotate(142)">{key}</text>
+                                <text transform="translate(190,120) rotate(-52)">{key}</text>
                             </g>
                         </>}
                     </svg>

@@ -1,0 +1,21 @@
+---
+const { keyword } = Astro.props;
+---
+<svg viewBox="0 0 300 400" width="100%" height="auto">
+  <path d="M 150 305 Q 150 245 150 205" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+  <path d="M 150 205 Q 112 175 80 155" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+  <path d="M 150 205 Q 188 175 220 155" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+  <path d="M 150 205 Q 150 170 150 148" stroke="var(--stem-color)" stroke-width="2" fill="none"/>
+  <path d="M 80 155 Q 58 128 48 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <path d="M 80 155 Q 92 128 98 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <path d="M 220 155 Q 208 128 202 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <path d="M 220 155 Q 232 128 242 108" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <path d="M 150 148 Q 140 122 136 102" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <path d="M 150 148 Q 160 122 164 102" stroke="var(--stem-color)" stroke-width="1.5" fill="none"/>
+  <text x="20" y="108" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+  <text x="82" y="108" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+  <text x="122" y="100" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+  <text x="158" y="100" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+  <text x="198" y="108" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+  <text x="238" y="108" font-family="monospace" font-size="9" font-weight="bold" fill="#e07a5f">{keyword}</text>
+</svg>

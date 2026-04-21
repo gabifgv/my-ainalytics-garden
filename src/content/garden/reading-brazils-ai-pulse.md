@@ -3,7 +3,7 @@ title: "Reading Brazil's AI Pulse: What the Anthropic Economic Index Reveals Abo
 date: 2026-04-21
 category: "GenAI"
 keyword: "Claude"
-flower_type: "fern"
+flower_type: "vine"
 id: "04/01"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"

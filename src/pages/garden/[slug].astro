@@ -7,8 +7,15 @@ import DandelionPlant from '../../components/DandelionPlant.astro';
 import LavenderPlant from '../../components/LavenderPlant.astro';
 import TulipPlant from '../../components/TulipPlant.astro';
 import RosePlant from '../../components/RosePlant.astro';
-import FernPlant from '../../components/FernPlant.astro';
 import SunflowerPlant from '../../components/SunflowerPlant.astro';
+import WheatPlant from '../../components/WheatPlant.astro';
+import BambooPlant from '../../components/BambooPlant.astro';
+import CoralPlant from '../../components/CoralPlant.astro';
+import GinkgoPlant from '../../components/GinkgoPlant.astro';
+import CosmosPlant from '../../components/CosmosPlant.astro';
+import ThistlePlant from '../../components/ThistlePlant.astro';
+import LotusPlant from '../../components/LotusPlant.astro';
+import VinePlant from '../../components/VinePlant.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
@@ -58,8 +65,15 @@ const formattedDate = date.toLocaleDateString('en-US', {
         {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
         {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
         {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
-        {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
         {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
+        {activeFlower === 'wheat' && <WheatPlant keyword={keyword} />}
+        {activeFlower === 'bamboo' && <BambooPlant keyword={keyword} />}
+        {activeFlower === 'coral' && <CoralPlant keyword={keyword} />}
+        {activeFlower === 'ginkgo' && <GinkgoPlant keyword={keyword} />}
+        {activeFlower === 'cosmos' && <CosmosPlant keyword={keyword} />}
+        {activeFlower === 'thistle' && <ThistlePlant keyword={keyword} />}
+        {activeFlower === 'lotus' && <LotusPlant keyword={keyword} />}
+        {activeFlower === 'vine' && <VinePlant keyword={keyword} />}
       </div>
 
       <div class="post-header-meta">
