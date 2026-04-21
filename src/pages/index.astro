@@ -4,16 +4,13 @@ const allPosts = await getCollection('garden');
 
 const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const getFlower = (type) => {
-  const types = {
-    "tulip": { color: "#d97a8a", label: "Tulip_Type" },
-    "dandelion": { color: "#e9c46a", label: "Dandelion_Type" },
-    "lavender": { color: "#827397", label: "Lavender_Type" },
-    "sunflower": { color: "#f4a261", label: "Sunflower_Type" },
-    "rose": { color: "#e63946", label: "Rose_Type" },
-    "fern": { color: "#3a5335", label: "Fern_Type" }
-  };
-  return types[type] || types["tulip"];
+const flowerMeta: Record<string, { color: string; label: string }> = {
+  dandelion: { color: "#d97a8a", label: "=> Dandelion_Type" },
+  lavender:  { color: "#827397", label: "{ } Lavender_Type" },
+  tulip:     { color: "#c48b52", label: "[ ] Tulip_Type" },
+  rose:      { color: "#c0435a", label: "| | Rose_Type" },
+  sunflower: { color: "#c48b52", label: "( ) Sunflower_Type" },
+  fern:      { color: "#3a5335", label: ">> Fern_Type" },
 };
 ---
 
@@ -23,70 +20,300 @@ const getFlower = (type) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my AInalytics garden</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #fcfaf6; --text-main: #2d2d2d; --stem-color: #7a8c71; --main-font: 'Gotham', sans-serif; }
-        body { background-color: var(--bg-color); font-family: var(--main-font); margin: 0; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; }
-        .garden-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; width: 100%; max-width: 1200px; }
-        .botanical-card { transition: transform 0.3s ease; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; }
+        :root {
+            --bg-color: #fcfaf6;
+            --text-main: #2d2d2d;
+            --text-muted: #857f76;
+            --border-color: #e5e0d8;
+            --stem-color: #7a8c71;
+            --main-font: 'Gotham', 'Space Grotesk', sans-serif;
+            --code-font: 'Gotham Code', 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--main-font);
+            margin: 0;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(252, 250, 246, 0.7);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: fixed;
+            top: 0; left: -400px;
+            width: 350px; height: 100vh;
+            background: #ffffff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.04);
+            z-index: 999;
+            padding: 50px 40px;
+            transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+
+        .close-btn {
+            background: none; border: none;
+            font-size: 2rem; font-weight: 300;
+            color: var(--text-muted);
+            cursor: pointer;
+            align-self: flex-end;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .sidebar-title { font-size: 1.5rem; font-weight: 500; margin: 0 0 5px 0; }
+        .sidebar-tag {
+            font-family: var(--code-font);
+            font-size: 0.75rem;
+            color: var(--stem-color);
+            margin-bottom: 30px;
+            display: block;
+        }
+        .sidebar-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            border-left: 2px solid var(--border-color);
+            padding-left: 15px;
+        }
+
+        /* --- Header --- */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .menu-btn {
+            position: absolute;
+            top: 10px; left: 0;
+            background: none; border: none;
+            cursor: pointer;
+            padding: 10px;
+            color: var(--stem-color);
+            transition: opacity 0.2s;
+        }
+        .menu-btn:hover { opacity: 0.7; }
+
+        .site-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: #4a5c4e;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+        }
+
+        .subtitle-code {
+            font-family: var(--code-font);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* --- Grid --- */
+        .garden-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .botanical-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.3s ease;
+        }
         .botanical-card:hover { transform: translateY(-5px); }
-        .post-title { font-size: 1.4rem; font-weight: 500; margin: 0; color: #2d2d2d; }
-        .post-category { font-family: monospace; font-size: 0.7rem; color: var(--stem-color); text-transform: uppercase; }
+
+        .card-meta {
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .post-title { font-size: 1.4rem; font-weight: 500; margin: 0 0 5px 0; }
+        .post-category {
+            font-family: var(--code-font);
+            font-size: 0.7rem;
+            color: var(--stem-color);
+            text-transform: uppercase;
+        }
+        .post-id {
+            font-family: var(--code-font);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        svg { max-height: 350px; }
     </style>
 </head>
 <body>
-    <header style="text-align: center; margin-bottom: 60px;">
-        <h1 style="font-size: 3.5rem; font-weight: 300; color: #4a5c4e; margin: 0;">my AInalytics garden</h1>
-        <div style="font-family: monospace; color: #857f76;">const author = "Gabriella Pinheiro";</div>
+
+    <div class="overlay" id="menuOverlay"></div>
+
+    <nav class="sidebar" id="aboutSidebar">
+        <button class="close-btn" id="closeBtn">&times;</button>
+        <h2 class="sidebar-title">README.md</h2>
+        <span class="sidebar-tag">> whoami</span>
+        <p class="sidebar-text">
+            Leading Data and AI ecosystems to drive real business impact. Between designing scalable architectures, MLOps, and GenAI strategies, this space serves as a living archive of my learnings. When I'm not optimizing pipelines, I split my time cultivating my reading habit and training my pace for upcoming marathons.
+        </p>
+    </nav>
+
+    <header>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+            <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="28" height="2" fill="currentColor"/>
+                <rect y="9" width="20" height="2" fill="currentColor"/>
+                <rect y="18" width="28" height="2" fill="currentColor"/>
+            </svg>
+        </button>
+        <h1 class="site-title">my AInalytics garden</h1>
+        <div class="subtitle-code">const author: Manager&lt;AI, Analytics&gt; = "Gabriella Pinheiro"; // insights catalog</div>
     </header>
 
     <main class="garden-grid">
         {sortedPosts.map(post => {
-            const type = post.data.flower_type || (post.data.category === 'GenAI' ? 'dandelion' : 'tulip');
-            const flower = getFlower(type);
+            const type = post.data.flower_type || (post.data.category === 'GenAI' ? 'dandelion' : post.data.category === 'MLOps' ? 'lavender' : 'tulip');
+            const meta = flowerMeta[type] ?? flowerMeta.tulip;
             const key = post.data.keyword || "Data";
+            const rep = `${key} ${key} ${key}`;
 
             return (
                 <a href={`/garden/${post.slug}`} class="botanical-card">
                     <svg viewBox="0 0 300 400" width="100%" height="auto">
+                        {/* Base: folha + caule */}
                         <path d="M 110 380 Q 150 410 190 380 L 180 300 Q 150 310 120 300 Z" fill="#f0ebd8" opacity="0.6"/>
-                        <path d="M 150 305 Q 150 250 150 200" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
-                        
-                        <g transform="translate(150, 180)" font-family="monospace" font-size="10" font-weight="bold" fill={flower.color}>
-                            {type === "sunflower" && [...Array(12)].map((_, i) => (
-                                <text transform={`rotate(${i * 30}) translate(35, 0)`}>{key}</text>
-                            ))}
-                            {type === "lavender" && [...Array(7)].map((_, i) => (
-                                <text transform={`translate(${i % 2 === 0 ? 10 : -45}, ${-i * 20})`}>{key}</text>
-                            ))}
-                            {type === "tulip" && (
-                                <g transform="rotate(-90)">
-                                    <text transform="rotate(-20) translate(10, -20)">{key}</text>
-                                    <text transform="rotate(0) translate(20, 0)">{key}</text>
-                                    <text transform="rotate(20) translate(10, 20)">{key}</text>
-                                </g>
-                            )}
-                            {type === "rose" && [...Array(6)].map((_, i) => (
-                                <text transform={`rotate(${i * 60}) translate(${10 + i*2}, ${i*2})`}>{key}</text>
-                            ))}
-                            {type === "dandelion" && [...Array(16)].map((_, i) => (
-                                <text transform={`rotate(${i * 22.5}) translate(45, 0)`} font-size="8">{key}</text>
-                            ))}
-                            {type === "fern" && [...Array(10)].map((_, i) => (
-                                <text transform={`translate(${i % 2 === 0 ? 15 : -55}, ${-i * 18}) rotate(${i % 2 === 0 ? 10 : -10})`}>{key}</text>
-                            ))}
-                        </g>
+
+                        {/* Dandelion — raios radiais com texto repetido */}
+                        {type === "dandelion" && <>
+                            <path d="M 150 305 Q 140 200 150 140" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g transform="translate(150, 140)" font-family="var(--main-font)" font-size="11" font-weight="bold" fill={meta.color}>
+                                {[-90,-60,-30,0,30,60,90,120,150,180,210,240,270,300,330].map(angle => (
+                                    <text transform={`rotate(${angle}) translate(10, 4)`}>{rep}</text>
+                                ))}
+                            </g>
+                        </>}
+
+                        {/* Lavender — alternando lados ao longo do caule */}
+                        {type === "lavender" && <>
+                            <path d="M 150 305 L 150 70" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="12" font-weight="bold" fill={meta.color}>
+                                {[260,240,220,200,180,160,140,120,100,80].map((y, i) => (
+                                    <text transform={`translate(${i % 2 === 0 ? 155 : 145}, ${y}) rotate(${i % 2 === 0 ? -15 : 195})`}>{key}</text>
+                                ))}
+                                <text transform="translate(150, 60) rotate(-90)">{key}</text>
+                            </g>
+                        </>}
+
+                        {/* Tulip — pétalas abertas em leque */}
+                        {type === "tulip" && <>
+                            <path d="M 150 305 Q 160 220 150 180" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="11" font-weight="bold" fill={meta.color}>
+                                {[-135,-120,-105,-90,-75,-60,-45].map((angle, i) => (
+                                    <text transform={`translate(${150 + (i < 3 ? -(3-i)*15 : i > 3 ? (i-3)*15 : 0)}, ${180 - Math.abs(i-3)*15}) rotate(${angle})`} text-anchor="start">{key}</text>
+                                ))}
+                            </g>
+                        </>}
+
+                        {/* Rose — espiral de pétalas */}
+                        {type === "rose" && <>
+                            <path d="M 150 305 Q 150 240 150 190" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g transform="translate(150, 175)" font-family="var(--main-font)" font-size="11" font-weight="bold" fill={meta.color}>
+                                {[0,30,60,90,120,150,180,210,240,270,300,330].map((angle, i) => (
+                                    <text transform={`rotate(${angle}) translate(${8 + (i % 3) * 4}, ${(i % 3) * 3})`}>{key}</text>
+                                ))}
+                            </g>
+                        </>}
+
+                        {/* Sunflower — raios densos ao redor do centro */}
+                        {type === "sunflower" && <>
+                            <path d="M 150 305 Q 150 230 150 195" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g transform="translate(150, 175)" font-family="var(--main-font)" font-size="10" font-weight="bold" fill={meta.color}>
+                                {[...Array(18)].map((_, i) => (
+                                    <text transform={`rotate(${i * 20}) translate(30, 3)`}>{key}</text>
+                                ))}
+                            </g>
+                        </>}
+
+                        {/* Fern — folhas alternadas subindo */}
+                        {type === "fern" && <>
+                            <path d="M 150 305 L 150 80" stroke="var(--stem-color)" stroke-width="3" fill="none"/>
+                            <g font-family="var(--main-font)" font-size="10" font-weight="bold" fill={meta.color}>
+                                {[...Array(10)].map((_, i) => (
+                                    <text transform={`translate(${i % 2 === 0 ? 165 : 100}, ${290 - i * 22}) rotate(${i % 2 === 0 ? -30 : 210})`}>{key}</text>
+                                ))}
+                            </g>
+                        </>}
                     </svg>
 
-                    <div style="width: 100%; border-top: 1px solid #e5e0d8; padding-top: 15px; display: flex; justify-content: space-between;">
+                    <div class="card-meta">
                         <div>
                             <h2 class="post-title">{post.data.title}</h2>
-                            <span class="post-category">[{flower.label}]</span>
+                            <span class="post-category">{meta.label}</span>
                         </div>
-                        <div style="font-family: monospace; color: #857f76;">{post.data.id}</div>
+                        {post.data.id && <div class="post-id">{post.data.id}</div>}
                     </div>
                 </a>
-            )
+            );
         })}
     </main>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const sidebar = document.getElementById('aboutSidebar');
+        const overlay = document.getElementById('menuOverlay');
+
+        function openMenu() {
+            sidebar?.classList.add('active');
+            overlay?.classList.add('active');
+        }
+
+        function closeMenu() {
+            sidebar?.classList.remove('active');
+            overlay?.classList.remove('active');
+        }
+
+        menuBtn?.addEventListener('click', openMenu);
+        closeBtn?.addEventListener('click', closeMenu);
+        overlay?.addEventListener('click', closeMenu);
+    </script>
 </body>
 </html>
