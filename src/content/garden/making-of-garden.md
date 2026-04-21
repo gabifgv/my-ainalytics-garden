@@ -2,7 +2,7 @@
 title: "The Making of My AInalytics Garden: Engineering a Documentation Ecosystem"
 date: 2026-04-21
 category: "Data Architecture"
-keyword: "Meta"
+keyword: "AutoDocumentation"
 id: "05/01"
 author: "Gabriella Pinheiro"
 status: "Draft 🌿"
