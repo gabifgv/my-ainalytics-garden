@@ -3,6 +3,7 @@ title: "Engineering a Second Brain: How I Automated My Technical Documentation"
 date: 2026-04-21
 category: "GenAI"
 keyword: "Automation"
+flower_type: "lavender"
 id: "01/01"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"
