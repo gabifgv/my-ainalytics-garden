@@ -2,9 +2,9 @@
 title: "The Retention Algorithm: Engineering an XGBoost People Analytics System to Predict Voluntary Turnover"
 date: 2026-04-21
 category: "MLOps"
-flower_type: "sunflower"
+flower_type: "Tulip"
 keyword: "PeopleAnalytics"
-id: "03/01"
+id: "21/04/2026"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"
 excerpt: "A rigorous people analytics case study — how I built a production-ready XGBoost pipeline to predict employee voluntary turnover, and what the feature importance ranking reveals about the true economics of retention."
