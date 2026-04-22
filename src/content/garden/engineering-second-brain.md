@@ -2,7 +2,8 @@
 title: "Engineering a Second Brain: How I Automated My Technical Documentation with Claude Code"
 date: 2026-04-21
 category: "GenAI"
-keyword: "Automation"
+keyword: "AutoDOC"
+flower_type: "rose"
 id: "01/01"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"

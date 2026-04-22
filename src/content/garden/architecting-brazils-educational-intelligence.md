@@ -3,7 +3,7 @@ title: "Architecting Brazil's Educational Intelligence: A dbt + BigQuery + Verte
 date: 2026-04-21
 category: "Data Architecture"
 keyword: "DataMart"
-flower_type: "tulip"
+flower_type: "coral"
 id: "02/01"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"
