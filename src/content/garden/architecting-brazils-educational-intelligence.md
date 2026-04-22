@@ -2,8 +2,8 @@
 title: "Architecting Brazil's Educational Intelligence: A dbt + BigQuery + Vertex AI Pipeline for Strategic Campus Expansion"
 date: 2026-04-21
 category: "Data Architecture"
-keyword: "Medallion"
-flower_type: "sunflower"
+keyword: "DataMart"
+flower_type: "Tulip"
 id: "02/01"
 author: "Gabriella Pinheiro"
 status: "Live 🌱"
