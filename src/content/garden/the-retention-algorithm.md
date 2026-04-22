@@ -4,9 +4,8 @@ date: 2026-04-21
 category: "MLOps"
 flower_type: "tulip"
 keyword: "PeopleAnalytics"
-id: "03/01"
+id: "0003"
 author: "Gabriella Pinheiro"
-status: "Live 🌱"
 excerpt: "A rigorous people analytics case study — how I built a production-ready XGBoost pipeline to predict employee voluntary turnover, and what the feature importance ranking reveals about the true economics of retention."
 ---
 

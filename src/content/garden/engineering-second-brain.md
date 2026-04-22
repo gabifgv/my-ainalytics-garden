@@ -4,9 +4,8 @@ date: 2026-04-21
 category: "GenAI"
 keyword: "AutoDOC"
 flower_type: "rose"
-id: "01/01"
+id: "0001"
 author: "Gabriella Pinheiro"
-status: "Live 🌱"
 excerpt: "How I built an automated documentation ecosystem that turns terminal sessions into published knowledge — the genesis of the Analytics AI Garden, step by step."
 ---
 

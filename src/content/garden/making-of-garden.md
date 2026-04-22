@@ -3,10 +3,9 @@ title: "The Making of My AInalytics Garden: Engineering a Documentation Ecosyste
 date: 2026-04-21
 category: "Data Architecture"
 keyword: "AutoDocument"
-id: "05/01"
+id: "0005"
 flower_type: "lavender"
 author: "Gabriella Pinheiro"
-status: "Live 🌱"
 excerpt: "A full step-by-step breakdown of how I built an automated knowledge publishing system using Astro, Claude Code, and a botanical SVG engine — from zero to live in one afternoon."
 ---
 

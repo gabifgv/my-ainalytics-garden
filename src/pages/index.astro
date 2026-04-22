@@ -218,6 +218,22 @@ const flowerMeta: Record<string, { color: string; label: string }> = {
         }
 
         svg { max-height: 350px; }
+
+        @media (max-width: 768px) {
+            body { padding: 30px 16px; }
+            .site-title { font-size: 2rem; }
+            .garden-tagline { font-size: 0.82rem; }
+            .subtitle-code { font-size: 0.72rem; letter-spacing: 0; }
+            .garden-grid { grid-template-columns: 1fr; gap: 24px; }
+            .sidebar { width: 88vw; }
+            .post-title { font-size: 1.15rem; }
+        }
+
+        @media (max-width: 480px) {
+            .site-title { font-size: 1.6rem; letter-spacing: -0.5px; }
+            .subtitle-code { display: none; }
+            .post-title { font-size: 1.05rem; }
+        }
     </style>
 </head>
 <body>

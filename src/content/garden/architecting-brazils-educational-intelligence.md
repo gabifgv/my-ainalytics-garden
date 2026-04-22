@@ -4,9 +4,8 @@ date: 2026-04-21
 category: "Data Architecture"
 keyword: "DataMart"
 flower_type: "coral"
-id: "02/01"
+id: "0002"
 author: "Gabriella Pinheiro"
-status: "Live 🌱"
 excerpt: "How I applied medallion architecture principles and economic theory to build a municipality-level intelligence pipeline that helps FGV identify its next campus locations."
 ---
 

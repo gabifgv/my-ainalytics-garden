@@ -640,4 +640,59 @@ footer {
   .sidebar {
     width: 90vw;
   }
+
+  /* Charts */
+  .stat-bar-row {
+    grid-template-columns: 130px 1fr 42px;
+    gap: 8px;
+  }
+
+  .stat-bar-label {
+    font-size: 0.76rem;
+  }
+
+  /* Tables — scroll horizontal em telas pequenas */
+  .post-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chart-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .post-content th,
+  .post-content td,
+  .chart-table th,
+  .chart-table td {
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+
+  .attrition-split-segment {
+    font-size: 0.65rem;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-header-title {
+    font-size: 1.5rem;
+  }
+
+  .post-header-date {
+    font-size: 0.7rem;
+  }
+
+  .stat-bar-row {
+    grid-template-columns: 110px 1fr 38px;
+    gap: 6px;
+  }
+
+  .stat-bar-label {
+    font-size: 0.7rem;
+  }
 }

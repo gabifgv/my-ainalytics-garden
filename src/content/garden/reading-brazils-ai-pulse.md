@@ -4,9 +4,8 @@ date: 2026-04-21
 category: "GenAI"
 keyword: "Claude"
 flower_type: "cactus"
-id: "04/01"
+id: "0004"
 author: "Gabriella Pinheiro"
-status: "Live 🌱"
 excerpt: "Three quarters of Anthropic's Economic Index data reveal a structural gap in Brazil's GenAI adoption — and an economist's reading of why the pattern matters for every data leader in the country."
 ---
 
