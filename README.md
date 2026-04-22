@@ -216,7 +216,7 @@ If you want the `/done` automation working in your own repositories:
 
 ---
 
-## 📊 Metrics & Impact
+## Metrics & Impact
 
 This system has enabled:
 
