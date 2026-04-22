@@ -28,70 +28,174 @@ The question is not whether turnover is costly. The question is whether it is **
 
 ## The Dataset: IBM HR Analytics Benchmark
 
-The IBM HR Analytics dataset contains **1,470 employee records across 35 raw attributes**, representing a fictional company's workforce. The target variable is `Attrition` (voluntary exit: Yes/No). After removing non-predictive columns (`EmployeeNumber`, `Over18`, `EmployeeCount`, `StandardHours`), the working feature set is **31 variables**.
+The IBM HR Analytics dataset contains **1,470 employee records across 35 raw attributes**. The target variable is `Attrition` (voluntary exit: Yes/No). After removing non-predictive constants (`EmployeeNumber`, `Over18`, `EmployeeCount`, `StandardHours`), the working feature set is **31 variables**.
 
-The dataset is structured, cross-sectional, and fully labeled — meaning no missing values, no time-series dependency, and no label noise. These properties make it well-suited for coursework but also more optimistic than real-world HR data, which typically has missingness, self-reporting bias, and evolving label definitions.
+The dataset is structured, cross-sectional, and fully labeled — no missing values, no time-series dependency. These properties make it well-suited for coursework but more optimistic than real-world HR data, which typically carries missingness, self-reporting bias, and evolving label definitions.
 
 ---
 
 ## Descriptive Statistics: What the Data Says Before the Model
 
-Before training, understanding the marginal distributions of key variables is not optional — it is where the hypotheses come from.
+Understanding marginal distributions before training is not optional — it is where the hypotheses come from.
 
-**Target variable:**
+**Target variable distribution**
 
-| | Count | % |
-|---|---|---|
-| No Attrition (stays) | 1,233 | 83.9% |
-| Attrition (exits) | 237 | 16.1% |
+<div class="attrition-split">
+  <div class="attrition-split-segment" style="width: 83.9%; background: #7a8c71;">No Attrition — 1,233 employees (83.9%)</div>
+  <div class="attrition-split-segment" style="width: 16.1%; background: #d97a8a;">Attrition — 237 (16.1%)</div>
+</div>
 
-The **5.2:1 class ratio** is the central technical constraint of this project. Any evaluation metric that aggregates both classes (accuracy) will be misleading.
+The **5.2:1 class ratio** is the central technical constraint of this project. Any metric that aggregates both classes (accuracy) will be misleading — a model that always predicts "stays" scores 83.9% without learning anything.
 
-**Continuous variables — key statistics:**
+**Continuous variables**
 
-| Variable | Mean | Median | Std Dev | Min | Max |
-|---|---|---|---|---|---|
-| Age | 36.9 | 36 | 9.1 | 18 | 60 |
-| MonthlyIncome (USD) | 6,503 | 4,919 | 4,707 | 1,009 | 19,999 |
-| YearsAtCompany | 7.0 | 5 | 6.1 | 0 | 40 |
-| YearsWithCurrManager | 4.1 | 3 | 3.6 | 0 | 17 |
-| TotalWorkingYears | 11.3 | 10 | 7.8 | 0 | 40 |
-| TrainingTimesLastYear | 2.8 | 3 | 1.3 | 0 | 6 |
-| DistanceFromHome | 9.2 | 7 | 8.1 | 1 | 29 |
+| Variable | Mean | Median | Std Dev | Range |
+|---|---|---|---|---|
+| Age | 36.9 | 36 | 9.1 | 18–60 |
+| MonthlyIncome (USD) | 6,503 | 4,919 | 4,707 | 1,009–19,999 |
+| YearsAtCompany | 7.0 | 5 | 6.1 | 0–40 |
+| YearsWithCurrManager | 4.1 | 3 | 3.6 | 0–17 |
+| TotalWorkingYears | 11.3 | 10 | 7.8 | 0–40 |
+| TrainingTimesLastYear | 2.8 | 3 | 1.3 | 0–6 |
+| DistanceFromHome | 9.2 | 7 | 8.1 | 1–29 |
 
-High standard deviation on `MonthlyIncome` (4,707 on a mean of 6,503) indicates wide salary dispersion — the model needs to treat salary as a relative signal, not absolute. `YearsWithCurrManager` has a median of 3 with a long right tail, consistent with the literature on manager relationship stability as a retention factor.
+High standard deviation on `MonthlyIncome` (4,707 on a mean of 6,503) signals wide salary dispersion — the model treats compensation as a relative signal, not absolute. `YearsWithCurrManager` has a median of 3 with a long right tail, consistent with literature on manager relationship stability as a retention factor.
 
-**Categorical variables — attrition rate by group:**
+**Attrition rate by categorical group**
 
-| Variable | Group | Attrition Rate |
-|---|---|---|
-| OverTime | Yes | 30.5% |
-| OverTime | No | 10.4% |
-| MaritalStatus | Single | 25.5% |
-| MaritalStatus | Married | 12.4% |
-| MaritalStatus | Divorced | 10.1% |
-| StockOptionLevel | 0 | 24.2% |
-| StockOptionLevel | 1 | 11.3% |
-| StockOptionLevel | 2 | 3.7% |
-| StockOptionLevel | 3 | 8.6% |
-| Department | Sales | 20.6% |
-| Department | HR | 19.0% |
-| Department | R&D | 13.8% |
-| JobLevel | 1 (entry) | 26.3% |
-| JobLevel | 5 (senior) | 4.8% |
+<div class="stat-bars">
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Overtime</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Yes</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 87%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">30.5%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">No</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 30%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">10.4%</span>
+    </div>
+  </div>
 
-Even without a model, these conditional distributions tell a coherent story: **overtime workers exit at nearly 3× the rate of non-overtime peers** (burnout signal). Single employees exit at 2× the married rate (lower anchoring costs). Employees with no stock options exit at 6.5× the rate of those at Level 2 (asset specificity effect). These patterns will surface again in feature importance — confirming that the model is learning interpretable economic signals, not noise.
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Marital Status</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Single</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 73%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">25.5%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Married</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 35%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">12.4%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Divorced</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 29%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">10.1%</span>
+    </div>
+  </div>
 
-**Ordinal satisfaction scales (1–4, where 1=Low, 4=Very High):**
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Stock Option Level</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 0 (no equity)</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 69%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">24.2%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 1</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 32%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">11.3%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 2</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 11%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">3.7%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 3</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 25%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">8.6%</span>
+    </div>
+  </div>
 
-| Scale | Mean | Attrition rate (score=1) | Attrition rate (score=4) |
-|---|---|---|---|
-| JobSatisfaction | 2.73 | 22.8% | 11.3% |
-| EnvironmentSatisfaction | 2.72 | 25.4% | 13.0% |
-| RelationshipSatisfaction | 2.71 | 20.6% | 13.0% |
-| WorkLifeBalance | 2.76 | 31.2% | 17.5% |
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Department</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Sales</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 59%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">20.6%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Human Resources</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 54%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">19.0%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">R&D</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 39%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">13.8%</span>
+    </div>
+  </div>
 
-Every satisfaction dimension shows the expected gradient: lower satisfaction correlates with higher exit rates. `WorkLifeBalance` shows the steepest gradient — employees at level 1 exit at 31.2%, roughly double the dataset average.
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Job Level</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 1 (entry)</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 75%; background: #827397;"></div></div>
+      <span class="stat-bar-value">26.3%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Level 5 (senior)</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 14%; background: #827397;"></div></div>
+      <span class="stat-bar-value">4.8%</span>
+    </div>
+  </div>
+</div>
+
+Even without a model, these conditional distributions form a coherent narrative. Overtime workers exit at nearly **3× the rate** of non-overtime peers (burnout signal). Employees with no stock options exit at **6.5× the rate** of Level 2 holders (asset specificity effect). Entry-level employees exit at **5.5× the rate** of senior employees. These patterns will resurface in feature importance — confirming the model learns interpretable economic signals, not noise.
+
+**Satisfaction scales — attrition at score extremes (1=Low, 4=Very High)**
+
+<div class="stat-bars">
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Attrition rate at score 1 vs score 4</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Job Satisfaction ①</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 65%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">22.8%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Job Satisfaction ④</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 32%; background: #7a8c71;"></div></div>
+      <span class="stat-bar-value">11.3%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Environment Sat. ①</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 73%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">25.4%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Environment Sat. ④</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 37%; background: #7a8c71;"></div></div>
+      <span class="stat-bar-value">13.0%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Work-Life Balance ①</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 89%; background: #d97a8a;"></div></div>
+      <span class="stat-bar-value">31.2%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">Work-Life Balance ④</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 50%; background: #7a8c71;"></div></div>
+      <span class="stat-bar-value">17.5%</span>
+    </div>
+  </div>
+</div>
+
+Every satisfaction dimension shows the expected gradient. `WorkLifeBalance` carries the steepest slope — employees at score 1 exit at 31.2%, roughly double the dataset average.
 
 ---
 
@@ -99,14 +203,12 @@ Every satisfaction dimension shows the expected gradient: lower satisfaction cor
 
 ### Step 1 — Exploratory Data Analysis and Feature Engineering
 
-Before any preprocessing, I mapped the attrition rate across each categorical variable and plotted distributions for all continuous features. The goal at this stage is to form hypotheses about which variables carry genuine predictive signal vs. noise.
+Before any preprocessing, I mapped the attrition rate across each categorical variable and plotted distributions for all continuous features. Key EDA decisions:
 
-Key EDA findings:
-- `MonthlyRate`, `HourlyRate`, and `DailyRate` are three separate pay-related fields but show near-zero attrition differentiation — they appear to be internally inconsistent compensation records rather than true market salary proxies. `MonthlyIncome` is the only reliable compensation signal.
-- `EmployeeCount`, `Over18`, and `StandardHours` are constants (value never varies) — zero predictive power, removed.
-- `JobLevel` and `MonthlyIncome` are highly correlated (Pearson r ≈ 0.95) — kept both but noted collinearity for interpretation.
-
-Encoding: all categorical variables (e.g., `Department`, `MaritalStatus`, `BusinessTravel`) were one-hot encoded. Ordinal scales (satisfaction scores, `JobLevel`, `StockOptionLevel`) were kept as integers — their ordinal nature carries information that dummy coding would destroy.
+- `MonthlyRate`, `HourlyRate`, and `DailyRate` show near-zero attrition differentiation — internally inconsistent records, not true market signals. `MonthlyIncome` is the only reliable compensation proxy.
+- `EmployeeCount`, `Over18`, `StandardHours` are constants — removed.
+- `JobLevel` and `MonthlyIncome` are highly correlated (Pearson r ≈ 0.95) — kept both, noted collinearity for interpretation.
+- Ordinal scales (satisfaction scores, `JobLevel`, `StockOptionLevel`) kept as integers — ordinal information would be destroyed by dummy coding.
 
 ### Step 2 — Train/Test Split and Class Imbalance Handling
 
@@ -116,9 +218,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 ```
 
-The `stratify=y` argument is non-negotiable: it ensures the 16.1% attrition proportion is preserved in both train and test sets. Without stratification, a random split could produce an unrepresentative test set, invalidating evaluation.
-
-SMOTE (Synthetic Minority Oversampling Technique) was applied **inside the training pipeline only** — never on the test set and never before the split. This is the most common error in class imbalance handling:
+`stratify=y` ensures the 16.1% attrition rate is preserved in both splits. SMOTE is applied **inside the training pipeline only** — the most common class imbalance error is applying it before the split, leaking synthetic minority observations into the test set and destroying evaluation validity:
 
 ```python
 pipeline = Pipeline([
@@ -127,74 +227,119 @@ pipeline = Pipeline([
 ])
 ```
 
-By encapsulating SMOTE inside a Pipeline, it only executes on the training fold during cross-validation. The test set always evaluates against the true class distribution — the realistic deployment condition.
+By encapsulating SMOTE inside a `Pipeline`, it executes only on the training fold during cross-validation. The test set always evaluates against the true class distribution.
 
 ### Step 3 — Model Selection and Comparison
 
-Four models were trained and evaluated using 5-fold stratified cross-validation on the training set. Evaluation priority: **F1-Score** (harmonic mean of precision and recall) over accuracy. At a 16.1% minority class rate, accuracy is misleading — a model that predicts "No Attrition" for every observation achieves 83.9% accuracy without learning anything.
+Four models evaluated via 5-fold stratified cross-validation. Priority metric: **F1-Score** (harmonic mean of precision and recall), not accuracy.
 
-| Model | F1-Score | AUC-ROC | Precision | Recall |
-|---|---|---|---|---|
-| Logistic Regression | 0.393 | 0.711 | 0.401 | 0.385 |
-| Random Forest (300 est., depth=10) | 0.396 | 0.712 | 0.390 | 0.402 |
-| **XGBoost (300 est., depth=6, lr=0.1)** | **0.417** | **0.711** | **0.413** | **0.421** |
-| Neural Network (MLP 64→32) | 0.299 | 0.596 | 0.312 | 0.287 |
+<table class="chart-table">
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>F1-Score</th>
+      <th>AUC-ROC</th>
+      <th>Precision</th>
+      <th>Recall</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Logistic Regression</td>
+      <td>0.393</td>
+      <td>0.711</td>
+      <td>0.401</td>
+      <td>0.385</td>
+    </tr>
+    <tr>
+      <td>Random Forest (300 est., depth=10)</td>
+      <td>0.396</td>
+      <td>0.712</td>
+      <td>0.390</td>
+      <td>0.402</td>
+    </tr>
+    <tr class="row-highlight">
+      <td>XGBoost (300 est., depth=6, lr=0.1)</td>
+      <td>0.417</td>
+      <td>0.711</td>
+      <td>0.413</td>
+      <td>0.421</td>
+    </tr>
+    <tr>
+      <td>Neural Network (MLP 64→32)</td>
+      <td>0.299</td>
+      <td>0.596</td>
+      <td>0.312</td>
+      <td>0.287</td>
+    </tr>
+  </tbody>
+</table>
 
-XGBoost's margin over Random Forest is modest (F1 +0.021), but the **precision advantage (0.413 vs. 0.390) is strategically significant**. In a retention intervention context, false positives are expensive: each flagged employee who is not actually at risk consumes a retention action — a compensation review, a development conversation, a manager intervention. Higher precision means fewer wasted interventions.
+XGBoost's margin over Random Forest is modest (F1 +0.021), but the **precision advantage (0.413 vs. 0.390)** is strategically relevant: false alarms are expensive. Each flagged employee who is not at risk consumes a retention action — a compensation review, a manager intervention, a development conversation. Precision controls the cost of acting on the wrong signal.
 
-The Neural Network underperformed significantly (F1 0.299), consistent with the principle that deep learning requires data volume to justify its complexity. At 1,470 rows, gradient boosting dominates.
+The Neural Network underperformed significantly (F1 0.299), consistent with the principle that deep learning requires volume to justify complexity. At 1,470 rows, gradient boosting dominates.
 
 ### Step 4 — Threshold Optimization
 
-XGBoost's default decision threshold is 0.5, calibrated for balanced classes. With a 16.1% minority, 0.5 is too conservative — it under-flags true attrition risk.
+XGBoost's default threshold of 0.5 was calibrated for balanced classes. With 16.1% minority, it under-flags true attrition risk. Custom optimization: for each CV fold, evaluate F1-Score across thresholds from 0.1 to 0.9 in 0.01 increments, then average the optimal threshold across folds. Result: **~0.35**, increasing recall without collapsing precision.
 
-Custom threshold optimization: for each of the 5 CV folds, I evaluated F1-Score at thresholds from 0.1 to 0.9 in 0.01 increments, then averaged the optimal threshold across folds. The result was a threshold of **~0.35**, increasing recall (catching more real departures) without collapsing precision.
+### Step 5 — Feature Importance (SHAP)
 
-```python
-thresholds = np.arange(0.1, 0.9, 0.01)
-best_threshold = np.mean([
-    thresholds[np.argmax([f1_score(y_val, proba >= t) for t in thresholds])]
-    for _, (train_idx, val_idx) in enumerate(cv.split(X_train, y_train))
-    ...
-])
-```
+SHAP (SHapley Additive exPlanations) provides model-agnostic feature attribution — each feature's average contribution to the prediction.
 
-### Step 5 — Feature Importance Analysis
+<div class="stat-bars">
+  <div class="stat-bar-group">
+    <span class="stat-bar-group-label">Mean absolute SHAP value — top predictors</span>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">StockOptionLevel</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 100%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">9.7%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">MonthlyIncome</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 65%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">6.3%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">JobSatisfaction</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 55%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">5.3%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">YearsWithCurrManager</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 50%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">4.9%</span>
+    </div>
+    <div class="stat-bar-row">
+      <span class="stat-bar-label">RelationshipSatisfaction</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 45%; background: #c48b52;"></div></div>
+      <span class="stat-bar-value">4.4%</span>
+    </div>
+  </div>
+</div>
 
-SHAP (SHapley Additive exPlanations) values provide model-agnostic feature attribution — each feature's contribution to a specific prediction, averaged across the dataset. The top predictors, ranked by mean absolute SHAP value:
+**StockOptionLevel (9.7%)** — Equity ownership creates an economic stake in the organization's future. No stock options = lower switching cost. The **asset specificity** problem in labor economics: employees without firm-specific financial investment have no deferred compensation anchor.
 
-1. **StockOptionLevel (9.7%)** — Equity ownership creates an economic stake in the organization. No stock options = no deferred compensation = lower switching cost. This is the **asset specificity** problem in labor economics: employees without firm-specific investment have no financial anchor.
+**MonthlyIncome (6.3%)** — Below-market compensation is the most legible retention failure. The signal is relative: an employee earning 15% below market is permanently in active search mode regardless of the absolute number.
 
-2. **MonthlyIncome (6.3%)** — Below-market compensation is the most legible retention failure. The signal is relative, not absolute: an employee earning 15% below market is permanently in search mode regardless of their absolute number.
+**JobSatisfaction (5.3%)** — Non-pecuniary compensation. Work content, autonomy, and impact offset salary gaps — until they don't.
 
-3. **JobSatisfaction (5.3%)** — Non-pecuniary compensation. Work content, autonomy, and impact offset salary gaps — until they don't. The 22.8% attrition rate at satisfaction level 1 vs. 11.3% at level 4 confirms the gradient.
+**YearsWithCurrManager (4.9%)** — Manager relationship stability. The organizational behavior literature is consistent: people don't leave companies, they leave managers.
 
-4. **YearsWithCurrManager (4.9%)** — Manager relationship stability. The organizational behavior literature is consistent: people don't leave companies, they leave managers. Short manager tenure indicates instability, not just inexperience.
-
-5. **RelationshipSatisfaction (4.4%)** — Lateral organizational bonds. High-performing technical teams have strong peer connections. When those fray, the signal appears here before it appears in exit interviews.
+**RelationshipSatisfaction (4.4%)** — Lateral organizational bonds. When peer connections fray, the signal appears here before it appears in exit interviews.
 
 ### Step 6 — Intervention Protocol Design (Deployment Proposal)
 
-A model that lives in a notebook is an academic exercise. The production design generates **monthly employee risk scores** (probability of voluntary exit within 90 days) and routes high-risk employees to one of four intervention protocols based on the primary driver:
+A model that lives in a notebook is an academic exercise. The production design generates **monthly employee risk scores** (probability of voluntary exit within 90 days) and routes high-risk employees to targeted interventions based on the primary risk driver:
 
-| Risk Driver | Intervention |
+| Primary Driver | Intervention Protocol |
 |---|---|
-| No equity, high attrition probability | Stock option expansion proposal |
+| No equity + high risk | Stock option expansion proposal |
 | Below-market income | Compensation benchmarking + adjustment review |
-| High overtime, elevated risk | Workload redistribution + burnout prevention |
+| High overtime + elevated risk | Workload redistribution + burnout prevention |
 | Short manager tenure | Proactive manager coaching + stability plan |
 
-Ethics note: algorithmic signals in HR contexts carry real risk — confirmation bias, discriminatory proxies embedded in historical data, dehumanizing reduction of individual complexity to a score. In this design, **the model flags risk; it does not determine action**. Human judgment remains in the loop. The algorithm informs the conversation; the manager conducts it.
-
----
-
-## What the Features Tell You: Economics Disguised as HR Data
-
-The feature importance ranking reads as a coherent economic narrative, not a list of statistical correlates. Stock options tie financial future to the organization. Market-competitive salary signals that the employer understands the employee's external value. Satisfaction measures capture the non-pecuniary dimension of the compensation bundle that economists have documented since the 1970s (Rosen, 1986 on compensating differentials).
-
-The demographic patterns reinforce this reading. Single employees exit at twice the rate of married peers — lower anchoring costs means lower switching friction. Overtime workers exit at 3× the rate — the burnout premium is real and measurable. Department concentrations (Sales, HR) align with external labor market demand for those skills: more portable skills, more exit options.
-
-What the model learns is not surprising to a labor economist. What it adds is precision: which specific employee, in which month, at what probability. That precision is what converts insight into intervention.
+**Ethics note:** the model flags risk — it does not determine action. Human judgment remains in the loop at every step. The algorithm informs the conversation; the manager conducts it.
 
 ---
 
@@ -202,8 +347,8 @@ What the model learns is not surprising to a labor economist. What it adds is pr
 
 My MSc in Economics at UFF trained me in production function decomposition: output depends on capital, labor, and total factor productivity. A team's TFP includes tacit knowledge — institutional memory that lives in experienced professionals' heads and cannot be replicated by a new hire in 90 days.
 
-Voluntary turnover destroys TFP. The retention algorithm is an **investment in TFP preservation**. The ROI case is simple: intervention cost × success rate vs. replacement cost × churn rate. For a senior Data Scientist at market rate in Brazil: annual salary ~R$200k, replacement cost ~R$300–400k. The model needs to prevent one senior departure per year to justify its operational cost. That is not a complex business case.
+Voluntary turnover destroys TFP. The retention algorithm is an **investment in TFP preservation**. The ROI case is simple: for a senior Data Scientist at market rate in Brazil (annual salary ~R$200k, replacement cost ~R$300–400k), the model needs to prevent one senior departure per year to justify its full operational cost. That is not a complex business case.
 
-This project demonstrated that the technical components of people analytics — class-balanced gradient boosting, SHAP attribution, threshold optimization — are mature and accessible. The harder problems are organizational: data governance, manager adoption, ethical framework, and the discipline to treat the model's output as input to human judgment rather than a replacement for it.
+What this project demonstrated is that the technical components — class-balanced gradient boosting, SHAP attribution, threshold optimization — are mature and accessible. The harder problems are organizational: data governance, manager adoption, ethical framework, and the discipline to treat the model's output as input to human judgment rather than a replacement for it.
 
 The garden continues growing.
