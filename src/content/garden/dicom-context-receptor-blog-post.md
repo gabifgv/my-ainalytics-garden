@@ -2,8 +2,8 @@
 title: "Building the FGV MARKETING Context Receptor: How I Gave FGV's AI a Memory"
 date: 2026-04-26
 category: "Data Architecture"
-keyword: "ContextLayer"
-flower_type: "coral"
+keyword: "ContextAI"
+flower_type: "VINE"
 id: "0006"
 author: "Gabriella Pinheiro"
 excerpt: "A complete step-by-step build log of the operational context infrastructure I architected for FGV's DICOM — connecting a no-code form to GitHub, Power Automate, SharePoint, and an AI consumption layer, from zero to production in one day."
