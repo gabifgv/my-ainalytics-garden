@@ -8,13 +8,21 @@ import TulipPlant from './TulipPlant.astro';
 import RosePlant from './RosePlant.astro';
 import SunflowerPlant from './SunflowerPlant.astro';
 import FernPlant from './FernPlant.astro';
+import BambooPlant from './BambooPlant.astro';
+import CactusPlant from './CactusPlant.astro';
+import CoralPlant from './CoralPlant.astro';
+import CosmosPlant from './CosmosPlant.astro';
+import GinkgoPlant from './GinkgoPlant.astro';
+import LotusPlant from './LotusPlant.astro';
+import ThistlePlant from './ThistlePlant.astro';
+import VinePlant from './VinePlant.astro';
+import WheatPlant from './WheatPlant.astro';
 
 interface Props {
   post: CollectionEntry<'garden'>;
 }
 
 const { post } = Astro.props;
-// ATENÇÃO: Pegamos o flower_type aqui dos dados do post
 const { title, category, keyword, id, flower_type } = post.data;
 
 /**
@@ -22,10 +30,10 @@ const { title, category, keyword, id, flower_type } = post.data;
  * Se você definiu flower_type no .md, ele ganha.
  * Se não, ele usa o padrão da categoria.
  */
-const activeFlower = flower_type || 
-                     (category === 'GenAI' ? 'dandelion' : 
-                      category === 'MLOps' ? 'lavender' : 
-                      'tulip');
+const activeFlower = flower_type ||
+                      (category === 'GenAI' ? 'dandelion' :
+                       category === 'MLOps' ? 'lavender' :
+                       'tulip');
 
 const categoryLabel: Record<string, string> = {
   'GenAI': '=> Dandelion_Type',
@@ -33,23 +41,41 @@ const categoryLabel: Record<string, string> = {
   'Data Architecture': '[ ] Tulip_Type',
 };
 
-// Label para as flores manuais
+// Label para todas as flores manuais
 const flowerLabels: Record<string, string> = {
-  'fern': '>> Fern_Type',
-  'rose': '| | Rose_Type',
-  'sunflower': '( ) Sunflower_Type'
+  'fern':     '>> Fern_Type',
+  'rose':     '| | Rose_Type',
+  'sunflower':'( ) Sunflower_Type',
+  'bamboo':   '|| Bamboo_Type',
+  'cactus':   '/\\ Cactus_Type',
+  'coral':    '~~ Coral_Type',
+  'cosmos':   '** Cosmos_Type',
+  'ginkgo':   '<> Ginkgo_Type',
+  'lotus':    '() Lotus_Type',
+  'thistle':  ':; Thistle_Type',
+  'vine':     '~> Vine_Type',
+  'wheat':    '## Wheat_Type',
 };
 ---
 
 <a href={`/garden/${post.slug}`} class="botanical-card">
   <div class="flower-container" style="display: flex; justify-content: center; width: 100%;">
-    {/* 3. SELETOR DINÂMICO REAL (Aqui estava o erro antes) */}
-    {activeFlower === 'dandelion' && <DandelionPlant keyword={keyword} />}
-    {activeFlower === 'lavender' && <LavenderPlant keyword={keyword} />}
-    {activeFlower === 'tulip' && <TulipPlant keyword={keyword} />}
-    {activeFlower === 'rose' && <RosePlant keyword={keyword} />}
-    {activeFlower === 'sunflower' && <SunflowerPlant keyword={keyword} />}
-    {activeFlower === 'fern' && <FernPlant keyword={keyword} />}
+    {/* 3. SELETOR COMPLETO — todas as plantas mapeadas */}
+    {activeFlower === 'dandelion'  && <DandelionPlant  keyword={keyword} />}
+    {activeFlower === 'lavender'   && <LavenderPlant   keyword={keyword} />}
+    {activeFlower === 'tulip'      && <TulipPlant      keyword={keyword} />}
+    {activeFlower === 'rose'       && <RosePlant       keyword={keyword} />}
+    {activeFlower === 'sunflower'  && <SunflowerPlant  keyword={keyword} />}
+    {activeFlower === 'fern'       && <FernPlant       keyword={keyword} />}
+    {activeFlower === 'bamboo'     && <BambooPlant     keyword={keyword} />}
+    {activeFlower === 'cactus'     && <CactusPlant     keyword={keyword} />}
+    {activeFlower === 'coral'      && <CoralPlant      keyword={keyword} />}
+    {activeFlower === 'cosmos'     && <CosmosPlant     keyword={keyword} />}
+    {activeFlower === 'ginkgo'     && <GinkgoPlant     keyword={keyword} />}
+    {activeFlower === 'lotus'      && <LotusPlant      keyword={keyword} />}
+    {activeFlower === 'thistle'    && <ThistlePlant    keyword={keyword} />}
+    {activeFlower === 'vine'       && <VinePlant       keyword={keyword} />}
+    {activeFlower === 'wheat'      && <WheatPlant      keyword={keyword} />}
   </div>
 
   <div class="card-meta">
